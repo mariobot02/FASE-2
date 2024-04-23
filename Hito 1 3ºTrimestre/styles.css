@@ -1,0 +1,9 @@
+.container {
+    margin-top: 20px;
+}
+.btn {
+    margin: 5px;
+}
+#weather-info p {
+    font-size: 16px;
+}

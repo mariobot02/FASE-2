@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del tiempo en España</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Consulta el tiempo en las principales ciudades de España</h1>
+        <div id="buttons-container"></div>
+        <div id="weather-info" class="mt-4">
+            
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('https://www.el-tiempo.net/api/json/v2/home')
+            .then(response => response.json())
+            .then(data => setupButtons(data.ciudades));
+
+        function setupButtons(ciudades) {
+            const buttonsContainer = document.getElementById('buttons-container');
+            ciudades.forEach(ciudad => {
+                let cityButton = document.createElement('button');
+                cityButton.className = 'btn btn-primary';
+                cityButton.textContent = ciudad.name;
+                cityButton.onclick = () => displayWeatherOptions(ciudad);
+                buttonsContainer.appendChild(cityButton);
+            });
+        }
+
+        function displayWeatherOptions(ciudad) {
+            const weatherInfoDiv = document.getElementById('weather-info');
+            weatherInfoDiv.innerHTML = `<h3>El tiempo en ${ciudad.name}</h3>
+                <button class="btn btn-info" onclick="displayTemperature('max', ${ciudad.temperatures.max})">Temperatura Máxima</button>
+                <button class="btn btn-info" onclick="displayTemperature('min', ${ciudad.temperatures.min})">Temperatura Mínima</button>
+                <button class="btn btn-info" onclick="displaySkyState('${ciudad.stateSky.description}')">Estado del Cielo</button>
+                <div id='detail-info'></div>`;
+        }
+
+        window.displayTemperature = function(type, temp) {
+            const detailInfoDiv = document.getElementById('detail-info');
+            if (type === 'max') {
+                detailInfoDiv.innerHTML = `<p>Temperatura máxima: ${temp}°C</p>`;
+            } else {
+                detailInfoDiv.innerHTML = `<p>Temperatura mínima: ${temp}°C</p>`;
+            }
+        };
+
+        window.displaySkyState = function(description) {
+            const detailInfoDiv = document.getElementById('detail-info');
+            detailInfoDiv.innerHTML = `<p>Estado del cielo: ${description}</p>`;
+        };
+    });
+    </script>
+</body>
+</html>
